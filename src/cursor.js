@@ -1,7 +1,6 @@
 /*
  * decaffeinate suggestions:
  * DS001: Remove Babel/TypeScript constructor workaround
- * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
  * DS206: Consider reworking classes to avoid initClass
@@ -186,7 +185,7 @@ module.exports =
 
       const {row, column} = this.getBufferPosition()
       const range = [[row, column - 1], [row, column + 1]]
-      const [before, after] = Array.from(this.editor.getTextInBufferRange(range))
+      const [before, after] = this.editor.getTextInBufferRange(range)
       if (/\s/.test(before) || /\s/.test(after)) { return false }
 
       const nonWordCharacters = this.getNonWordCharacters()
