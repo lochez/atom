@@ -1,6 +1,5 @@
 /*
  * decaffeinate suggestions:
- * DS001: Remove Babel/TypeScript constructor workaround
  * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
  * DS206: Consider reworking classes to avoid initClass
@@ -31,13 +30,8 @@ module.exports =
 
     // Instantiated by a {TextEditor}
     constructor ({editor, marker, id}) {
-      {
-        // Hack: trick Babel/TypeScript into allowing this before super.
-        if (false) { super() }
-        let thisFn = (() => { this }).toString()
-        let thisName = thisFn.slice(thisFn.indexOf('{') + 1, thisFn.indexOf(';')).trim()
-        eval(`${thisName} = this;`)
-      }
+      super(...arguments)
+
       this.editor = editor
       this.marker = marker
       this.emitter = new Emitter()
