@@ -444,7 +444,7 @@ module.exports = class Cursor extends Model {
     const position = this.getBufferPosition()
     const scanRange = this.getCurrentLineBufferRange()
     let endOfLeadingWhitespace = null
-    this.editor.scanInBufferRange(/^[ \t]*/, scanRange, ({range}) => endOfLeadingWhitespace = range.end)
+    this.editor.scanInBufferRange(/^[ \t]*/, scanRange, ({range}) => { endOfLeadingWhitespace = range.end })
 
     if (endOfLeadingWhitespace.isGreaterThan(position)) { return this.setBufferPosition(endOfLeadingWhitespace) }
   }
