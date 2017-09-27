@@ -390,50 +390,50 @@ module.exports = class Cursor extends Model {
 
   // Public: Moves the cursor to the end of the word.
   moveToEndOfWord () {
-    let position
-    if (position = this.getEndOfCurrentWordBufferPosition()) {
-      return this.setBufferPosition(position)
+    const position = this.getEndOfCurrentWordBufferPosition()
+    if (position) {
+      this.setBufferPosition(position)
     }
   }
 
   // Public: Moves the cursor to the beginning of the next word.
   moveToBeginningOfNextWord () {
-    let position
-    if (position = this.getBeginningOfNextWordBufferPosition()) {
+    const position = this.getBeginningOfNextWordBufferPosition()
+    if (position) {
       return this.setBufferPosition(position)
     }
   }
 
   // Public: Moves the cursor to the previous word boundary.
   moveToPreviousWordBoundary () {
-    let position
-    if (position = this.getPreviousWordBoundaryBufferPosition()) {
+    const position = this.getPreviousWordBoundaryBufferPosition()
+    if (position) {
       return this.setBufferPosition(position)
     }
   }
 
   // Public: Moves the cursor to the next word boundary.
   moveToNextWordBoundary () {
-    let position
-    if (position = this.getNextWordBoundaryBufferPosition()) {
+    const position = this.getNextWordBoundaryBufferPosition()
+    if (position) {
       return this.setBufferPosition(position)
     }
   }
 
   // Public: Moves the cursor to the previous subword boundary.
   moveToPreviousSubwordBoundary () {
-    let position
     const options = {wordRegex: this.subwordRegExp({backwards: true})}
-    if (position = this.getPreviousWordBoundaryBufferPosition(options)) {
+    const position = this.getPreviousWordBoundaryBufferPosition(options)
+    if (position) {
       return this.setBufferPosition(position)
     }
   }
 
   // Public: Moves the cursor to the next subword boundary.
   moveToNextSubwordBoundary () {
-    let position
     const options = {wordRegex: this.subwordRegExp()}
-    if (position = this.getNextWordBoundaryBufferPosition(options)) {
+    const position = this.getNextWordBoundaryBufferPosition(options)
+    if (position) {
       return this.setBufferPosition(position)
     }
   }
@@ -451,16 +451,16 @@ module.exports = class Cursor extends Model {
 
   // Public: Moves the cursor to the beginning of the next paragraph
   moveToBeginningOfNextParagraph () {
-    let position
-    if (position = this.getBeginningOfNextParagraphBufferPosition()) {
+    const position = this.getBeginningOfNextParagraphBufferPosition()
+    if (position) {
       return this.setBufferPosition(position)
     }
   }
 
   // Public: Moves the cursor to the beginning of the previous paragraph
   moveToBeginningOfPreviousParagraph () {
-    let position
-    if (position = this.getBeginningOfPreviousParagraphBufferPosition()) {
+    const position = this.getBeginningOfPreviousParagraphBufferPosition()
+    if (position) {
       return this.setBufferPosition(position)
     }
   }
