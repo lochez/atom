@@ -252,7 +252,7 @@ module.exports = class Cursor extends Model {
 
     if (this.goalColumn != null) { column = this.goalColumn }
     this.setScreenPosition({row: row - rowCount, column}, {skipSoftWrapIndentation: true})
-    return this.goalColumn = column
+    this.goalColumn = column
   }
 
   // Public: Moves the cursor down one screen row.
@@ -272,7 +272,7 @@ module.exports = class Cursor extends Model {
 
     if (this.goalColumn != null) { column = this.goalColumn }
     this.setScreenPosition({row: row + rowCount, column}, {skipSoftWrapIndentation: true})
-    return this.goalColumn = column
+    this.goalColumn = column
   }
 
   // Public: Moves the cursor left one screen column.
