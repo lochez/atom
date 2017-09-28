@@ -144,7 +144,9 @@ module.exports = class Cursor extends Model {
 
   // Public: Returns the underlying {DisplayMarker} for the cursor.
   // Useful with overlay {Decoration}s.
-  getMarker () { return this.marker }
+  getMarker () {
+    return this.marker
+  }
 
   // Public: Identifies if the cursor is surrounded by whitespace.
   //
