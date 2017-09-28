@@ -1,6 +1,5 @@
 /*
  * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
@@ -32,7 +31,7 @@ module.exports = class Cursor extends Model {
   }
 
   destroy () {
-    return this.marker.destroy()
+    this.marker.destroy()
   }
 
   /*
@@ -75,8 +74,8 @@ module.exports = class Cursor extends Model {
   //   * `autoscroll` A Boolean which, if `true`, scrolls the {TextEditor} to wherever
   //     the cursor moves to.
   setScreenPosition (screenPosition, options = {}) {
-    return this.changePosition(options, () => {
-      return this.marker.setHeadScreenPosition(screenPosition, options)
+    this.changePosition(options, () => {
+      this.marker.setHeadScreenPosition(screenPosition, options)
     })
   }
 
@@ -93,8 +92,8 @@ module.exports = class Cursor extends Model {
   //     position. Defaults to `true` if this is the most recently added cursor,
   //     `false` otherwise.
   setBufferPosition (bufferPosition, options = {}) {
-    return this.changePosition(options, () => {
-      return this.marker.setHeadBufferPosition(bufferPosition, options)
+    this.changePosition(options, () => {
+      this.marker.setHeadBufferPosition(bufferPosition, options)
     })
   }
 
@@ -284,18 +283,18 @@ module.exports = class Cursor extends Model {
   moveLeft (columnCount = 1, {moveToEndOfSelection} = {}) {
     const range = this.marker.getScreenRange()
     if (moveToEndOfSelection && !range.isEmpty()) {
-      return this.setScreenPosition(range.start)
+      this.setScreenPosition(range.start)
     } else {
       let {row, column} = this.getScreenPosition()
 
       while ((columnCount > column) && (row > 0)) {
         columnCount -= column
         column = this.editor.lineLengthForScreenRow(--row)
-        columnCount--
-      } // subtract 1 for the row move
+        columnCount-- // subtract 1 for the row move
+      }
 
       column = column - columnCount
-      return this.setScreenPosition({row, column}, {clipDirection: 'backward'})
+      this.setScreenPosition({row, column}, {clipDirection: 'backward'})
     }
   }
 
@@ -308,7 +307,7 @@ module.exports = class Cursor extends Model {
   moveRight (columnCount = 1, {moveToEndOfSelection} = {}) {
     const range = this.marker.getScreenRange()
     if (moveToEndOfSelection && !range.isEmpty()) {
-      return this.setScreenPosition(range.end)
+      this.setScreenPosition(range.end)
     } else {
       let {row, column} = this.getScreenPosition()
       const maxLines = this.editor.getScreenLineCount()
@@ -325,28 +324,28 @@ module.exports = class Cursor extends Model {
       }
 
       column = column + columnCount
-      return this.setScreenPosition({row, column}, {clipDirection: 'forward'})
+      this.setScreenPosition({row, column}, {clipDirection: 'forward'})
     }
   }
 
   // Public: Moves the cursor to the top of the buffer.
   moveToTop () {
-    return this.setBufferPosition([0, 0])
+    this.setBufferPosition([0, 0])
   }
 
   // Public: Moves the cursor to the bottom of the buffer.
   moveToBottom () {
-    return this.setBufferPosition(this.editor.getEofBufferPosition())
+    this.setBufferPosition(this.editor.getEofBufferPosition())
   }
 
   // Public: Moves the cursor to the beginning of the line.
   moveToBeginningOfScreenLine () {
-    return this.setScreenPosition([this.getScreenRow(), 0])
+    this.setScreenPosition([this.getScreenRow(), 0])
   }
 
   // Public: Moves the cursor to the beginning of the buffer line.
   moveToBeginningOfLine () {
-    return this.setBufferPosition([this.getBufferRow(), 0])
+    this.setBufferPosition([this.getBufferRow(), 0])
   }
 
   // Public: Moves the cursor to the beginning of the first character in the
@@ -361,7 +360,7 @@ module.exports = class Cursor extends Model {
     let firstCharacterColumn = null
     this.editor.scanInBufferRange(/\S/, screenLineBufferRange, function ({range, stop}) {
       firstCharacterColumn = range.start.column
-      return stop()
+      stop()
     })
 
     if ((firstCharacterColumn != null) && (firstCharacterColumn !== this.getBufferColumn())) {
@@ -370,22 +369,22 @@ module.exports = class Cursor extends Model {
       targetBufferColumn = screenLineBufferRange.start.column
     }
 
-    return this.setBufferPosition([screenLineBufferRange.start.row, targetBufferColumn])
+    this.setBufferPosition([screenLineBufferRange.start.row, targetBufferColumn])
   }
 
   // Public: Moves the cursor to the end of the line.
   moveToEndOfScreenLine () {
-    return this.setScreenPosition([this.getScreenRow(), Infinity])
+    this.setScreenPosition([this.getScreenRow(), Infinity])
   }
 
   // Public: Moves the cursor to the end of the buffer line.
   moveToEndOfLine () {
-    return this.setBufferPosition([this.getBufferRow(), Infinity])
+    this.setBufferPosition([this.getBufferRow(), Infinity])
   }
 
   // Public: Moves the cursor to the beginning of the word.
   moveToBeginningOfWord () {
-    return this.setBufferPosition(this.getBeginningOfCurrentWordBufferPosition())
+    this.setBufferPosition(this.getBeginningOfCurrentWordBufferPosition())
   }
 
   // Public: Moves the cursor to the end of the word.
@@ -400,7 +399,7 @@ module.exports = class Cursor extends Model {
   moveToBeginningOfNextWord () {
     const position = this.getBeginningOfNextWordBufferPosition()
     if (position) {
-      return this.setBufferPosition(position)
+      this.setBufferPosition(position)
     }
   }
 
@@ -408,7 +407,7 @@ module.exports = class Cursor extends Model {
   moveToPreviousWordBoundary () {
     const position = this.getPreviousWordBoundaryBufferPosition()
     if (position) {
-      return this.setBufferPosition(position)
+      this.setBufferPosition(position)
     }
   }
 
@@ -416,7 +415,7 @@ module.exports = class Cursor extends Model {
   moveToNextWordBoundary () {
     const position = this.getNextWordBoundaryBufferPosition()
     if (position) {
-      return this.setBufferPosition(position)
+      this.setBufferPosition(position)
     }
   }
 
@@ -425,7 +424,7 @@ module.exports = class Cursor extends Model {
     const options = {wordRegex: this.subwordRegExp({backwards: true})}
     const position = this.getPreviousWordBoundaryBufferPosition(options)
     if (position) {
-      return this.setBufferPosition(position)
+      this.setBufferPosition(position)
     }
   }
 
@@ -434,7 +433,7 @@ module.exports = class Cursor extends Model {
     const options = {wordRegex: this.subwordRegExp()}
     const position = this.getNextWordBoundaryBufferPosition(options)
     if (position) {
-      return this.setBufferPosition(position)
+      this.setBufferPosition(position)
     }
   }
 
@@ -446,14 +445,16 @@ module.exports = class Cursor extends Model {
     let endOfLeadingWhitespace = null
     this.editor.scanInBufferRange(/^[ \t]*/, scanRange, ({range}) => { endOfLeadingWhitespace = range.end })
 
-    if (endOfLeadingWhitespace.isGreaterThan(position)) { return this.setBufferPosition(endOfLeadingWhitespace) }
+    if (endOfLeadingWhitespace.isGreaterThan(position)) {
+      this.setBufferPosition(endOfLeadingWhitespace)
+    }
   }
 
   // Public: Moves the cursor to the beginning of the next paragraph
   moveToBeginningOfNextParagraph () {
     const position = this.getBeginningOfNextParagraphBufferPosition()
     if (position) {
-      return this.setBufferPosition(position)
+      this.setBufferPosition(position)
     }
   }
 
@@ -461,7 +462,7 @@ module.exports = class Cursor extends Model {
   moveToBeginningOfPreviousParagraph () {
     const position = this.getBeginningOfPreviousParagraphBufferPosition()
     if (position) {
-      return this.setBufferPosition(position)
+      this.setBufferPosition(position)
     }
   }
 
@@ -492,7 +493,7 @@ module.exports = class Cursor extends Model {
       }
 
       if (!(beginningOfWordPosition != null ? beginningOfWordPosition.isEqual(currentBufferPosition) : undefined)) {
-        return stop()
+        stop()
       }
     })
 
@@ -521,7 +522,7 @@ module.exports = class Cursor extends Model {
       }
 
       if (!(endOfWordPosition != null ? endOfWordPosition.isEqual(currentBufferPosition) : undefined)) {
-        return stop()
+        stop()
       }
     })
 
@@ -556,7 +557,7 @@ module.exports = class Cursor extends Model {
         if (range.end.isGreaterThanOrEqual(currentBufferPosition) || allowPrevious) {
           beginningOfWordPosition = range.start
         }
-        return stop()
+        stop()
       }
     })
 
@@ -593,7 +594,7 @@ module.exports = class Cursor extends Model {
         if (allowNext || range.start.isLessThanOrEqual(currentBufferPosition)) {
           endOfWordPosition = range.end
         }
-        return stop()
+        stop()
       }
     })
 
@@ -615,7 +616,7 @@ module.exports = class Cursor extends Model {
     let beginningOfNextWordPosition = null
     this.editor.scanInBufferRange((options.wordRegex != null ? options.wordRegex : this.wordRegExp()), scanRange, function ({range, stop}) {
       beginningOfNextWordPosition = range.start
-      return stop()
+      stop()
     })
 
     return beginningOfNextWordPosition || currentBufferPosition
@@ -678,7 +679,7 @@ module.exports = class Cursor extends Model {
 
   // Public: Deselects the current selection.
   clearSelection (options) {
-    return (this.selection != null ? this.selection.clear(options) : undefined)
+    if (this.selection) this.selection.clear(options)
   }
 
   // Public: Get the RegExp used by the cursor to determine what a "word" is.
@@ -737,7 +738,7 @@ module.exports = class Cursor extends Model {
   changePosition (options, fn) {
     this.clearSelection({autoscroll: false})
     fn()
-    if (options.autoscroll != null ? options.autoscroll : this.isLastCursor()) { return this.autoscroll() }
+    if (options.autoscroll != null ? options.autoscroll : this.isLastCursor()) { this.autoscroll() }
   }
 
   getScreenRange () {
@@ -747,7 +748,7 @@ module.exports = class Cursor extends Model {
 
   autoscroll (options = {}) {
     options.clip = false
-    return this.editor.scrollToScreenRange(this.getScreenRange(), options)
+    this.editor.scrollToScreenRange(this.getScreenRange(), options)
   }
 
   getBeginningOfNextParagraphBufferPosition () {
@@ -760,7 +761,7 @@ module.exports = class Cursor extends Model {
 
     this.editor.scanInBufferRange(EmptyLineRegExp, scanRange, function ({range, stop}) {
       position = range.start.traverse(Point(1, 0))
-      if (!position.isEqual(start)) { return stop() }
+      if (!position.isEqual(start)) { stop() }
     })
     return position
   }
@@ -773,7 +774,7 @@ module.exports = class Cursor extends Model {
     let position = new Point(0, 0)
     this.editor.backwardsScanInBufferRange(EmptyLineRegExp, scanRange, function ({range, stop}) {
       position = range.start.traverse(Point(1, 0))
-      if (!position.isEqual(start)) { return stop() }
+      if (!position.isEqual(start)) { stop() }
     })
     return position
   }
