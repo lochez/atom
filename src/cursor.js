@@ -1,8 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS104: Avoid inline assignments
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const {Point, Range} = require('text-buffer')
 const {Emitter} = require('event-kit')
 const _ = require('underscore-plus')
@@ -546,10 +541,9 @@ module.exports = class Cursor extends Model {
   //
   // Returns a {Range}.
   getBeginningOfCurrentWordBufferPosition (options = {}) {
-    let left
     const allowPrevious = options.allowPrevious != null ? options.allowPrevious : true
     const currentBufferPosition = this.getBufferPosition()
-    const previousNonBlankRow = (left = this.editor.buffer.previousNonBlankRow(currentBufferPosition.row)) != null ? left : 0
+    const previousNonBlankRow = this.editor.buffer.previousNonBlankRow(currentBufferPosition.row) || 0
     const scanRange = [[previousNonBlankRow, 0], currentBufferPosition]
 
     let beginningOfWordPosition = null
