@@ -1,7 +1,6 @@
 /*
  * decaffeinate suggestions:
  * DS104: Avoid inline assignments
- * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const {Point, Range} = require('text-buffer')
@@ -190,7 +189,8 @@ module.exports = class Cursor extends Model {
   isInsideWord (options) {
     const {row, column} = this.getBufferPosition()
     const range = [[row, column], [row, Infinity]]
-    return this.editor.getTextInBufferRange(range).search((options != null ? options.wordRegex : undefined) != null ? (options != null ? options.wordRegex : undefined) : this.wordRegExp()) === 0
+    const searchRegex = (options && options.wordRegex) || this.wordRegExp()
+    return this.editor.getTextInBufferRange(range).search(searchRegex) === 0
   }
 
   // Public: Returns the indentation level of the current line.
@@ -484,7 +484,8 @@ module.exports = class Cursor extends Model {
     const scanRange = [[previousNonBlankRow != null ? previousNonBlankRow : 0, 0], currentBufferPosition]
 
     let beginningOfWordPosition = null
-    this.editor.backwardsScanInBufferRange((options.wordRegex != null ? options.wordRegex : this.wordRegExp()), scanRange, function ({range, stop}) {
+    const wordRegex = options.wordRegex != null ? options.wordRegex : this.wordRegExp()
+    this.editor.backwardsScanInBufferRange(wordRegex, scanRange, function ({range, stop}) {
       if ((range.start.row < currentBufferPosition.row) && (currentBufferPosition.column > 0)) {
         // force it to stop at the beginning of each line
         beginningOfWordPosition = new Point(currentBufferPosition.row, 0)
@@ -513,7 +514,8 @@ module.exports = class Cursor extends Model {
     const scanRange = [currentBufferPosition, this.editor.getEofBufferPosition()]
 
     let endOfWordPosition = null
-    this.editor.scanInBufferRange((options.wordRegex != null ? options.wordRegex : this.wordRegExp()), scanRange, function ({range, stop}) {
+    const wordRegex = options.wordRegex != null ? options.wordRegex : this.wordRegExp()
+    this.editor.scanInBufferRange(wordRegex, scanRange, function ({range, stop}) {
       if (range.start.row > currentBufferPosition.row) {
         // force it to stop at the beginning of each line
         endOfWordPosition = new Point(range.start.row, 0)
@@ -551,7 +553,8 @@ module.exports = class Cursor extends Model {
     const scanRange = [[previousNonBlankRow, 0], currentBufferPosition]
 
     let beginningOfWordPosition = null
-    this.editor.backwardsScanInBufferRange((options.wordRegex != null ? options.wordRegex : this.wordRegExp(options)), scanRange, function ({range, matchText, stop}) {
+    const wordRegex = options.wordRegex != null ? options.wordRegex : this.wordRegExp(options)
+    this.editor.backwardsScanInBufferRange(wordRegex, scanRange, function ({range, matchText, stop}) {
       // Ignore 'empty line' matches between '\r' and '\n'
       if ((matchText === '') && (range.start.column !== 0)) { return }
 
@@ -588,7 +591,8 @@ module.exports = class Cursor extends Model {
     const scanRange = [currentBufferPosition, this.editor.getEofBufferPosition()]
 
     let endOfWordPosition = null
-    this.editor.scanInBufferRange((options.wordRegex != null ? options.wordRegex : this.wordRegExp(options)), scanRange, function ({range, matchText, stop}) {
+    const wordRegex = options.wordRegex != null ? options.wordRegex : this.wordRegExp(options)
+    this.editor.scanInBufferRange(wordRegex, scanRange, function ({range, matchText, stop}) {
       // Ignore 'empty line' matches between '\r' and '\n'
       if ((matchText === '') && (range.start.column !== 0)) { return }
 
@@ -616,7 +620,8 @@ module.exports = class Cursor extends Model {
     const scanRange = [start, this.editor.getEofBufferPosition()]
 
     let beginningOfNextWordPosition = null
-    this.editor.scanInBufferRange((options.wordRegex != null ? options.wordRegex : this.wordRegExp()), scanRange, function ({range, stop}) {
+    const wordRegex = options.wordRegex != null ? options.wordRegex : this.wordRegExp()
+    this.editor.scanInBufferRange(wordRegex, scanRange, function ({range, stop}) {
       beginningOfNextWordPosition = range.start
       stop()
     })
@@ -694,7 +699,15 @@ module.exports = class Cursor extends Model {
   wordRegExp (options) {
     const nonWordCharacters = _.escapeRegExp(this.getNonWordCharacters())
     let source = `^[\t ]*$|[^\\s${nonWordCharacters}]+`
-    if ((options != null ? options.includeNonWordCharacters : undefined) != null ? (options != null ? options.includeNonWordCharacters : undefined) : true) {
+
+    let includeNonWordCharacters
+    if (options && options.includeNonWordCharacters != null) {
+      includeNonWordCharacters = options.includeNonWordCharacters
+    } else {
+      includeNonWordCharacters = true
+    }
+
+    if (includeNonWordCharacters) {
       source += `|${`[${nonWordCharacters}]+`}`
     }
     return new RegExp(source, 'g')
